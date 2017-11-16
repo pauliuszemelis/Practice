@@ -81,13 +81,14 @@ function calculatePrices ($costs, $margin) {
 	$total_income = $income_first + $income_business + $income_economy;
 	$target_income = $costs*(1+$margin);
 	$profit_loss = $total_income - $target_income;
+	$profit_loss_proc = round((-1*($target_income *100 / $total_income)+100), 2);
 
-	$VISO_VIETU = $FIRST_CLASS+$BUSINESS_CLASS+$ECONOMY_CLASS;
-	$uzimta_vietu = $FIRST_CLASS*$FILL_FIRST+$BUSINESS_CLASS*$FILL_BUSINESS+$ECONOMY_CLASS*$FILL_ECONOMY;
-	$proc_uzimta = $uzimta_vietu*100/$VISO_VIETU;
+	$TOTAL_SEATS = $FIRST_CLASS+$BUSINESS_CLASS+$ECONOMY_CLASS;
+	$seats_taken = $FIRST_CLASS*$FILL_FIRST+$BUSINESS_CLASS*$FILL_BUSINESS+$ECONOMY_CLASS*$FILL_ECONOMY;
+	$proc_taken = $seats_taken*100/$TOTAL_SEATS;
 
-	echo "Lėktuvo vietų skaičius: " . $VISO_VIETU . ", iš kurių užimta : " . round($uzimta_vietu) . 
-	" (bendras užimtumas: " . round($proc_uzimta) . "%)<br>";
+	echo "Lėktuvo vietų skaičius: " . $TOTAL_SEATS . ", iš kurių užimta : " . round($seats_taken) . 
+	" (bendras užimtumas: " . round($proc_taken, 2) . "%)<br>";
 
 
 	echo "Pirmos klasės pajamos: " . $income_first . ", o užimtumas: " . $FILL_FIRST*100 . "%<br>";
@@ -95,9 +96,44 @@ function calculatePrices ($costs, $margin) {
 	echo "Ekonominės klasės pajamos: " . $income_economy . ", o užimtumas: " . $FILL_ECONOMY*100 . "%<br>";
 	echo "Gaunamos pajamos: " . $total_income . "<br>";
 	echo "Siekiamos pajamos: ". $target_income . "<br>";
-	echo "<b>Pelnas \ -Nuostoliai: " . $profit_loss . "</b><br>";
+	echo "<b>Pelnas (-nuostoliai): " . round($profit_loss, 2) . "</b> (" . round($profit_loss_proc, 2) . "%)<br>";
+	
+
 	echo "<hr>";
-	
-	
+	echo "<br><b><u>Siūlomas kainų koreagavimas: </u></b><br><br>";
+
+	$price_first_after = ceil($PRICE_FIRST * (1+abs($profit_loss_proc) / 100));
+	$price_business_after = ceil($PRICE_BUSINESS * (1+abs($profit_loss_proc) / 100));
+	$price_economy_after = ceil($PRICE_ECONOMY * (1+abs($profit_loss_proc) / 100));
+
+	echo "Pirmos klasės kaina: " . $PRICE_FIRST . " + " . abs($profit_loss_proc). "% = " . $price_first_after . "<br>";
+	echo "Biznio klasės kaina: " . $PRICE_BUSINESS . " + " . abs($profit_loss_proc). "% = " . $price_business_after . "<br>";
+	echo "Ekonominės klasės kaina: " . $PRICE_ECONOMY . " + " . abs($profit_loss_proc). "% = " . $price_economy_after . "<br>";
+
+	$income_first_after = $FIRST_CLASS * $price_first_after * $FILL_FIRST;
+	$income_business_after = $BUSINESS_CLASS * $price_business_after * $FILL_BUSINESS;
+	$income_economy_after = $ECONOMY_CLASS * $price_economy_after * $FILL_ECONOMY;
+
+	$total_income_after = $income_first_after + $income_business_after + $income_economy_after;
+	$target_income = $costs*(1+$margin);
+	$profit_loss_after = $total_income_after - $target_income;
+	$profit_loss_proc_after = round((-1*($target_income *100 / $total_income_after)+100), 2);
+
+	$TOTAL_SEATS = $FIRST_CLASS+$BUSINESS_CLASS+$ECONOMY_CLASS;
+	$seats_taken = $FIRST_CLASS*$FILL_FIRST+$BUSINESS_CLASS*$FILL_BUSINESS+$ECONOMY_CLASS*$FILL_ECONOMY;
+	$proc_taken = $seats_taken*100/$TOTAL_SEATS;
+
+	echo "Lėktuvo vietų skaičius: " . $TOTAL_SEATS . ", iš kurių užimta : " . round($seats_taken) . 
+	" (bendras užimtumas: " . round($proc_taken, 2) . "%)<br>";
+
+
+	echo "Pirmos klasės pajamos: " . $income_first_after . ", o užimtumas: " . $FILL_FIRST*100 . "%<br>";
+	echo "Biznio klasės pajamos: " . $income_business_after . ", o užimtumas: " . $FILL_BUSINESS*100 . "%<br>";
+	echo "Ekonominės klasės pajamos: " . $income_economy_after . ", o užimtumas: " . $FILL_ECONOMY*100 . "%<br>";
+	echo "Gaunamos pajamos: " . $total_income_after . "<br>";
+	echo "Siekiamos pajamos: ". $target_income . "<br>";
+	echo "<b>Pelnas (-nuostoliai): " . round($profit_loss_after, 2) . "</b> (" . round($profit_loss_proc_after, 2) . "%)<br>";
+
 }
+
 ?>
