@@ -74,7 +74,7 @@ function calculatePrices ($costs, $margin) {
 	$FILL_BUSINESS = 0.8;
 	$FILL_ECONOMY = 0.68;
 
-	$target_fill = 72.5;
+	$target_fill = 70.13;
 
 	$income_first = $FIRST_CLASS * $PRICE_FIRST * $FILL_FIRST;
 	$income_business = $BUSINESS_CLASS * $PRICE_BUSINESS * $FILL_BUSINESS;
@@ -89,6 +89,9 @@ function calculatePrices ($costs, $margin) {
 	$seats_taken = $FIRST_CLASS*$FILL_FIRST+$BUSINESS_CLASS*$FILL_BUSINESS+$ECONOMY_CLASS*$FILL_ECONOMY;
 	$proc_taken = $seats_taken*100/$TOTAL_SEATS;
 
+	echo "Pirmos klasės kaina: <b>" . $PRICE_FIRST . "</b><br>";
+	echo "Biznio klasės kaina: <b>" . $PRICE_BUSINESS . "</b><br>";
+	echo "Ekonominės klasės kaina: <b>" . $PRICE_ECONOMY . "</b><br>";
 	echo "Lėktuvo vietų skaičius: " . $TOTAL_SEATS . ", iš kurių užimta : " . round($seats_taken) . 
 	" (bendras užimtumas: " . round($proc_taken, 2) . "%)<br>";
 
@@ -143,11 +146,11 @@ function calculatePrices ($costs, $margin) {
 
 	$average_fill = round((($FILL_FIRST+$FILL_BUSINESS+$FILL_ECONOMY)/3*100), 2);
 	
-	echo "Vidutinis užimtumas pagal klasę: " . $average_fill . "%)<br>";
+	//echo "Vidutinis užimtumas pagal klasę: " . $average_fill . "%)<br>";
 
-	$extra_surcharge_first_proc = ($FILL_FIRST*100) - $target_fill;
-	$extra_surcharge_business_proc = ($FILL_BUSINESS*100) - $target_fill;
-	$extra_surcharge_economy_proc = ($FILL_ECONOMY*100) - $target_fill;
+	$extra_surcharge_first_proc = ($FILL_FIRST*100) - $proc_taken;
+	$extra_surcharge_business_proc = ($FILL_BUSINESS*100) - $proc_taken;
+	$extra_surcharge_economy_proc = ($FILL_ECONOMY*100) - $proc_taken;
 
 	if($extra_surcharge_first_proc>0) {
 		$final_price_first = ceil($PRICE_FIRST + ($PRICE_FIRST*($extra_surcharge_first_proc/100)));		
@@ -170,9 +173,29 @@ function calculatePrices ($costs, $margin) {
 			$final_price_economy = $PRICE_ECONOMY;
 		}
 
-	echo "Pirmos klasės kaina: <i>" . $PRICE_FIRST . "</i> + " . $extra_surcharge_first_proc . "% = <b>" . $final_price_first . "</b><br>";
-	echo "Biznio klasės kaina: <i>" . $PRICE_BUSINESS . "</i> + " . $extra_surcharge_business_proc . "% = <b>" . $final_price_business . "</b><br>";
-	echo "Ekonominės klasės kaina: <i>" . $PRICE_ECONOMY . "</i> + " . $extra_surcharge_economy_proc . "% = <b>" . $final_price_economy . "</b><br>";
+	if($extra_surcharge_first_proc >= 0) {
+	echo "Pirmos klasės kaina: <i>" . $PRICE_FIRST . "</i> + " . $extra_surcharge_first_proc . "% = <b>" . $final_price_first . "</b><br>";}
+		else {
+		echo "Pirmos klasės kaina: <i>" . $PRICE_FIRST . "</i> = <b>" . $final_price_first . "</b><br>";
+	}
+	
+	if($extra_surcharge_business_proc >= 0) {
+		echo "Biznio klasės kaina: <i>" . $PRICE_BUSINESS . "</i> + " . $extra_surcharge_business_proc . "% = <b>" . 
+		$final_price_business . "</b><br>";
+	}
+	else {
+		echo "Biznio klasės kaina: <i>" . $PRICE_BUSINESS . "</i> = <b>" . 
+		$final_price_business . "</b><br>";
+	}
+
+	if($extra_surcharge_economy_proc >= 0) {
+		echo "Ekonominės klasės kaina: <i>" . $PRICE_ECONOMY . "</i> + " . $extra_surcharge_economy_proc . "% = <b>" . 
+		$final_price_economy . "</b><br>";
+	}
+	else {
+		echo "Ekonominės klasės kaina: <i>" . $PRICE_ECONOMY . "</i> = <b>" . 
+		$final_price_economy . "</b><br>";
+	}
 
 
 	$income_first = $FIRST_CLASS * $final_price_first * $FILL_FIRST;
